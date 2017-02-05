@@ -54,6 +54,11 @@
 #include "crc64.h"
 #include "config.h"
 #include "server.h"
+/* 对底层读取源的抽象，可以从buffer读写，可以从文件读写。对上层是透明的。
+ * 上层只需要初始化好对应的结构即可
+ * 为什么不通过抽象出一个type来辅助，这样实现感觉会比较清晰。
+ * rioBufferIO/rioFdsetIO/rioFileIO
+ */
 
 /* ------------------------- Buffer I/O implementation ----------------------- */
 

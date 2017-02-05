@@ -40,6 +40,7 @@ struct _rio {
     /* Backend functions.
      * Since this functions do not tolerate short writes or reads the return
      * value is simplified to: zero on error, non zero on complete success. */
+    /* 这是什么设计，为啥0是错误，反过来多好!! */
     size_t (*read)(struct _rio *, void *buf, size_t len);
     size_t (*write)(struct _rio *, const void *buf, size_t len);
     off_t (*tell)(struct _rio *);
@@ -124,6 +125,10 @@ static inline int rioFlush(rio *r) {
     return r->flush(r);
 }
 
+/* 其实没有必要提供三个函数。这样以后在扩展的是会需要增加。
+ * 这个实际上是应用层的工作，我们可以把__rio中的union结构体拿出来
+ * 作为参数 void rioInit(rio *r, UnionType *t)
+ */
 void rioInitWithFile(rio *r, FILE *fp);
 void rioInitWithBuffer(rio *r, sds s);
 void rioInitWithFdset(rio *r, int *fds, int numfds);
