@@ -35,8 +35,19 @@ unsigned long long bioWaitStepOfType(int type);
 time_t bioOlderJobOfType(int type);
 void bioKillThreads(void);
 
+/* 用宏感觉还不如用枚举变量
+ * 这样BIO_NUM_OPS就不用手动来维护了。
+ */
 /* Background job opcodes */
-#define BIO_CLOSE_FILE    0 /* Deferred close(2) syscall. */
-#define BIO_AOF_FSYNC     1 /* Deferred AOF fsync. */
-#define BIO_LAZY_FREE     2 /* Deferred objects freeing. */
-#define BIO_NUM_OPS       3
+enum BioOpCode {
+    BIO_CLOSE_FILE = 0,
+    BIO_AOF_FSYNC,
+    BIO_LAZY_FREE,
+    BIO_NUM_OPS
+};
+
+/* ====下面是原来的宏代码==== */
+// #define BIO_CLOSE_FILE    0 /* Deferred close(2) syscall. */
+// #define BIO_AOF_FSYNC     1 /* Deferred AOF fsync. */
+// #define BIO_LAZY_FREE     2 /* Deferred objects freeing. */
+// #define BIO_NUM_OPS       3

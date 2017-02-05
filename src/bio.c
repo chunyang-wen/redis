@@ -65,6 +65,7 @@ static pthread_t bio_threads[BIO_NUM_OPS];
 static pthread_mutex_t bio_mutex[BIO_NUM_OPS];
 static pthread_cond_t bio_newjob_cond[BIO_NUM_OPS];
 static pthread_cond_t bio_step_cond[BIO_NUM_OPS];
+/* 维护每种任务的双端list */
 static list *bio_jobs[BIO_NUM_OPS];
 /* The following array is used to hold the number of pending jobs for every
  * OP type. This allows us to export the bioPendingJobsOfType() API that is
@@ -118,6 +119,7 @@ void bioInit(void) {
     /* Ready to spawn our threads. We use the single argument the thread
      * function accepts in order to pass the job ID the thread is
      * responsible of. */
+    /* 创建BIO_NUM_OPS个线程来处理后台任务 */
     for (j = 0; j < BIO_NUM_OPS; j++) {
         void *arg = (void*)(unsigned long) j;
         if (pthread_create(&thread,&attr,bioProcessBackgroundJobs,arg) != 0) {
@@ -233,6 +235,9 @@ unsigned long long bioPendingJobsOfType(int type) {
  *
  * This function is useful when from another thread, we want to wait
  * a bio.c thread to do more work in a blocking way.
+ */
+/* 如果待处理的任务不是0，则可能有任务再处理。等待当前任务处理完。
+ * 返回待处理的任务个数
  */
 unsigned long long bioWaitStepOfType(int type) {
     unsigned long long val;

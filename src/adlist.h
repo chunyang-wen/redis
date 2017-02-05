@@ -33,6 +33,8 @@
 
 /* Node, List, and Iterator are the only data structures used currently. */
 
+/* 实际上就是一个双向的list，支持迭代 */
+
 typedef struct listNode {
     struct listNode *prev;
     struct listNode *next;
@@ -47,8 +49,10 @@ typedef struct listIter {
 typedef struct list {
     listNode *head;
     listNode *tail;
+    /* 复制listNode的value字段时采用的方法，如果为NULL，则是浅拷贝，指向同样的位置*/
     void *(*dup)(void *ptr);
     void (*free)(void *ptr);
+    /* 比较函数，觉得使用compare类似的名字比较容易理解,相等返回0*/
     int (*match)(void *ptr, void *key);
     unsigned long len;
 } list;
